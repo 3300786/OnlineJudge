@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="create-problem-container">
+    <h2>Create New Problem</h2>
+    <form method="POST" enctype="multipart/form-data" class="create-problem-form">
+        <div class="form-group">
+            <label for="title">Problem Title:</label>
+            <input type="text" id="title" name="title" required class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="tags">Tags (comma-separated):</label>
+            <input type="text" id="tags" name="tags" placeholder="e.g. math, dfs, greedy" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="difficulty">Difficulty</label>
+            <select id="difficulty" name="difficulty" class="form-control">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="description">Problem Description:</label>
+            <textarea id="description" name="description" rows="5" required class="form-control"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="input_file">Input File:</label>
+            <input type="file" id="input_file" name="input_file" required class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="output_file">Output File:</label>
+            <input type="file" id="output_file" name="output_file" required class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="time_limit">Time Limit (seconds):</label>
+            <input type="number" id="time_limit" name="time_limit" value="1" required class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="memory_limit">Memory Limit (MB):</label>
+            <input type="number" id="memory_limit" name="memory_limit" value="256" required class="form-control">
+        </div>
+        <div class="form-group">
+            <button type="submit" class="submit-btn">Submit</button>
+        </div>
+    </form>
+</div>
+
+<style>
+.create-problem-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+h2 {
+    text-align: center;
+    color: #FF6A00; /* Updated to orange accent color */
+    font-size: 28px;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.create-problem-form {
+    display: grid;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-size: 1.1em;
+    margin-bottom: 8px;
+    color: #444; /* Slightly darker for readability */
+}
+
+input[type="text"],
+textarea,
+input[type="number"],
+input[type="file"],
+select {
+    padding: 12px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 10px; /* Rounded borders to align with design specs */
+    width: 100%;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+input[type="text"]:focus,
+textarea:focus,
+input[type="number"]:focus,
+input[type="file"]:focus,
+select:focus {
+    border-color: #FF6A00; /* Focus border color updated to match the theme */
+    background-color: #f2f2f2; /* Lighter background on focus */
+}
+
+textarea {
+    resize: vertical;
+}
+
+.submit-btn {
+    padding: 12px 20px;
+    background-color: #FF6A00; /* Primary button color updated */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease, transform 0.2s ease-in-out;
+}
+
+.submit-btn:hover {
+    background-color: #ff6a00; /* Hover color updated */
+    transform: scale(1.05);
+}
+
+.submit-btn:active {
+    background-color: #FF5722; /* Active color updated */
+}
+
+@media (max-width: 768px) {
+    .create-problem-container {
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+
+    .form-group {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+</style>
+
+{% endblock %}

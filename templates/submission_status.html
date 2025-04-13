@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Font Awesome 图标支持 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<div class="submission-container fade-in">
+    <div class="submission-header">
+        <h2><i class="fas fa-file-code"></i> Submission #{{ submission.id }}</h2>
+    </div>
+
+    <div class="submission-meta">
+        <p>
+            <strong><i class="fas fa-check-circle"></i> Status:</strong>
+            <span id="submission-status" class="status-label {{ submission.status|lower|replace(' ', '-') }}">
+                {{ submission.status }}
+            </span>
+        </p>
+        <p><strong><i class="fas fa-code"></i> Language:</strong> {{ submission.language }}</p>
+        <p><strong><i class="fas fa-book"></i> Problem ID:</strong> {{ submission.problem_id }}</p>
+    </div>
+
+    <h3><i class="fas fa-terminal"></i> Your Code:</h3>
+    <pre class="code-block">{{ submission.code }}</pre>
+
+    <div id="error-output">
+        {% if submission.error_message %}
+            <h3><i class="fas fa-bug"></i> Error Output:</h3>
+            <pre class="error-block">{{ submission.error_message }}</pre>
+        {% endif %}
+    </div>
+
+    <div class="back-link-wrapper">
+        <a href="{{ url_for('index') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+    </div>
+</div>
+
+<!-- ✅ 页面美化与动画 CSS -->
+<style>
+body {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    background-color: #f8f9fb;
+    margin: 0;
+    padding: 0;
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.submission-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    padding: 30px 40px;
+}
+
+.submission-header h2 {
+    font-size: 24px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.submission-meta p {
+    font-size: 16px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-label {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.status-label.accepted {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-label.wrong-answer {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-label.compile-error {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-label.time-limit-exceeded {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.code-block, .error-block {
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    padding: 16px;
+    border-radius: 8px;
+    font-family: Consolas, monospace;
+    font-size: 15px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.error-block {
+    background-color: #ffecec;
+    border-color: #e00;
+    color: #d8000c;
+}
+
+.back-link-wrapper {
+    margin-top: 20px;
+}
+
+.back-link {
+    text-decoration: none;
+    font-weight: 500;
+    color: #555;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s ease;
+}
+
+.back-link:hover {
+    color: #000;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .submission-container {
+        padding: 20px;
+    }
+
+    .submission-header h2 {
+        font-size: 20px;
+    }
+
+    .submission-meta p {
+        font-size: 14px;
+    }
+
+    .code-block, .error-block {
+        font-size: 14px;
+    }
+}
+</style>
+
+<!-- ✅ 状态轮询脚本 -->
+<script>
+window.onload = function() {
+    const POLL_INTERVAL = 3000;
+    const submissionStatusUrl = "{{ url_for('submission_status_json', submission_id=submission.id) }}";
+
+    function fetchSubmissionStatus() {
+        fetch(submissionStatusUrl)
+            .then(response => response.json())
+            .then(data => {
+                const statusElem = document.getElementById('submission-status');
+                const errorElem = document.getElementById('error-output');
+
+                if (statusElem) {
+                    statusElem.textContent = data.status;
+                    const newStatusClass = "status-label " + data.status.toLowerCase().replace(/\s+/g, '-');
+                    statusElem.className = newStatusClass;
+                }
+
+                if (errorElem) {
+                    if (data.error_message) {
+                        errorElem.innerHTML = `
+                            <h3><i class="fas fa-bug"></i> Error Output:</h3>
+                            <pre class="error-block">${data.error_message}</pre>
+                        `;
+                    } else {
+                        errorElem.innerHTML = '';
+                    }
+                }
+            })
+            .catch(error => console.error("Error fetching submission status:", error));
+    }
+
+    setInterval(fetchSubmissionStatus, POLL_INTERVAL);
+};
+</script>
+{% endblock %}

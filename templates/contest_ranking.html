@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ranking-container fade-in">
+  <div class="ranking-header">
+    <h2>
+      <i class="fas fa-trophy" style="margin-right: 12px; color: #FF6A00;"></i>
+      {{ contest.title }} - Leaderboard
+    </h2>
+    <p class="subtitle">Top Users by Solved Problems</p>
+  </div>
+
+  <div class="ranking-scroll-wrapper">
+    <table class="ranking-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>User</th>
+          {% for problem in problems %}
+            <th>Problem {{ loop.index }}</th>
+          {% endfor %}
+          <th>Solved</th>
+          <th>Penalty</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in rankings %}
+        <tr>
+          <td class="rank-cell">{{ entry.rank }}</td>
+          <td>{{ entry.user_id }}</td>
+          {% for problem in problems %}
+            {% set status_str = entry.problems.get(problem.id, "") %}
+            <td class="score-cell {% if status_str and status_str.startswith('+') %}correct{% elif status_str and status_str.startswith('-') %}wrong{% endif %}">
+              {{ status_str }}
+            </td>
+          {% endfor %}
+          <td class="bold-cell">{{ entry.correct_count }}</td>
+          <td>{{ entry.total_penalty }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Pagination Placeholder -->
+<div class="pagination-container">
+  {% if total_pages > 1 %}
+    {% for p in range(1, total_pages + 1) %}
+      <a href="{{ url_for('contest_ranking', contest_id=contest.id, page=p) }}" class="pagination-link {% if p == page %}active{% endif %}">{{ p }}</a>
+    {% endfor %}
+  {% endif %}
+</div>
+
+<div class="back-link-container">
+  <a href="{{ url_for('contest_list') }}" class="back-link">
+    <i class="fas fa-arrow-left"></i>
+    <span>Back to Contest List</span>
+  </a>
+</div>
+
+<style>
+:root {
+  --main-orange: #FF6A00;
+  --bg-white: #ffffff;
+  --text-dark: #333;
+}
+
+/* 动画 */
+.fade-in {
+  animation: fadeInUp 0.6s ease-out both;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Leaderboard Container */
+.ranking-container {
+  max-width: 960px;
+  margin: 50px auto;
+  padding: 50px;
+  background-color: var(--bg-white);
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+/* Header */
+.ranking-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.ranking-header h2 {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text-dark);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+.subtitle {
+  font-size: 18px;
+  color: #666;
+  margin-top: 8px;
+}
+
+/* Table Wrapper */
+.ranking-scroll-wrapper {
+  overflow-x: auto;
+  background-color: var(--bg-white);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+/* Ranking Table */
+.ranking-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 14px;
+  font-size: 18px;
+}
+.ranking-table th,
+.ranking-table td {
+  padding: 16px;
+  text-align: center;
+}
+.ranking-table th {
+  background-color: #f1f3f5;
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 17px;
+  border-bottom: 2px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.ranking-table td {
+  background-color: var(--bg-white);
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.ranking-table tr:hover td {
+  background-color: #f9f9f9;
+  transform: scale(1.01);
+}
+.rank-cell {
+  font-weight: bold;
+  font-size: 20px;
+  color: #2b2b2b;
+}
+.bold-cell {
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+/* Score Cell Colors */
+.score-cell.correct {
+  background-color: rgba(40, 167, 69, 0.15); /* 柔和绿色半透明 */
+  color: #28a745;
+  font-weight: 600;
+  border-radius: 8px;
+}
+.score-cell.wrong {
+  background-color: rgba(220, 53, 69, 0.15); /* 柔和红色半透明 */
+  color: #dc3545;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+/* Pagination */
+.pagination-container {
+  margin-top: 24px;
+  text-align: center;
+}
+.pagination-link {
+  margin: 0 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.2s ease;
+}
+.pagination-link:hover {
+  background-color: var(--main-orange);
+  color: white;
+}
+.pagination-link.active {
+  background-color: var(--main-orange);
+  color: white;
+  font-weight: bold;
+}
+
+/* Back Link */
+.back-link-container {
+  margin-top: 50px;
+  text-align: left;
+}
+.back-link {
+  font-size: 16px;
+  color: #444;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.3s ease;
+}
+.back-link:hover {
+  color: #000;
+}
+.back-link i {
+  transition: transform 0.3s ease;
+}
+.back-link:hover i {
+  transform: translateX(-3px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ranking-container {
+    padding: 30px;
+  }
+  .ranking-header h2 {
+    font-size: 28px;
+  }
+  .subtitle {
+    font-size: 16px;
+  }
+  .ranking-table th, .ranking-table td {
+    padding: 12px;
+    font-size: 16px;
+  }
+  .back-link {
+    font-size: 14px;
+  }
+}
+</style>
+{% endblock %}

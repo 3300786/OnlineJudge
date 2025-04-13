@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="profile-card animate-fade">
+    <h1 class="title">Edit Profile</h1>
+
+    <form method="POST" action="{{ url_for('edit_profile') }}" class="profile-form">
+        <div class="form-field">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="{{ user.username }}" required>
+        </div>
+        <div class="form-field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" required>
+        </div>
+        <div class="form-field">
+            <label for="blog">Blog</label>
+            <input type="text" id="blog" name="blog" value="{{ user.blog }}" required>
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="save-btn">
+                <i class="fas fa-check-circle" style="margin-right: 6px;"></i> Save Changes
+            </button>
+        </div>
+    </form>
+
+    <div class="back">
+        <a href="{{ url_for('user_history', user_id=user.id) }}">
+            <i class="fas fa-arrow-left"></i> Back to Profile
+        </a>
+    </div>
+</div>
+
+<style>
+/* 全局字体 */
+body, input, button, label {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+
+/* 动画效果 */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.animate-fade {
+    animation: fadeUp 0.6s ease;
+}
+
+/* 卡片容器 */
+.profile-card {
+    max-width: 580px;
+    margin: 60px auto;
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+.profile-card:hover {
+    transform: translateY(-4px);
+}
+
+/* 标题 */
+.title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 32px;
+    letter-spacing: 0.5px;
+}
+
+/* 表单 */
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #444;
+}
+input {
+    padding: 12px 16px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    transition: border 0.3s ease, box-shadow 0.3s;
+    box-sizing: border-box;
+}
+input:focus {
+    border-color: #FF6A00;
+    box-shadow: 0 0 0 3px rgba(250, 100, 0, 0.2);
+    outline: none;
+}
+
+/* 按钮 */
+.btn-group {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+}
+.save-btn {
+    background-color: #FF6A00;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s ease;
+}
+.save-btn:hover {
+    background-color: #e65c00;
+    transform: translateY(-1px);
+}
+
+/* 返回链接 */
+.back {
+    margin-top: 30px;
+    text-align: center;
+}
+.back a {
+    text-decoration: none;
+    font-size: 15px;
+    color: #666;
+    transition: color 0.3s;
+}
+.back a:hover {
+    color: #000;
+}
+.back a i {
+    margin-right: 6px;
+    transition: transform 0.3s ease;
+}
+.back a:hover i {
+    transform: translateX(-3px);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .profile-card {
+        padding: 24px;
+        margin: 40px 16px;
+    }
+    .title {
+        font-size: 28px;
+    }
+    .save-btn {
+        font-size: 14px;
+        padding: 10px 20px;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="create-contest-container">
+  <div class="page-header">
+    <h2>
+      <i class="fas fa-plus-circle" style="margin-right: 12px; color: #FF6A00;"></i> Create New Contest
+    </h2>
+  </div>
+
+  <form method="POST" class="contest-form">
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input type="text" name="title" id="title" required>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea name="description" id="description" rows="4"></textarea>
+    </div>
+
+    <div class="form-group time-group">
+      <div>
+        <label for="start_time">Start Time</label>
+        <input type="datetime-local" name="start_time" id="start_time" required>
+      </div>
+      <div>
+        <label for="end_time">End Time</label>
+        <input type="datetime-local" name="end_time" id="end_time" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Select Problems</label>
+      <div class="problems-checkboxes">
+        {% for problem in problems %}
+          <label class="checkbox-wrapper">
+            <input type="checkbox" name="problem_ids" value="{{ problem.id }}">
+            {{ problem.title }}
+          </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-submit">
+        <i class="fas fa-check-circle" style="margin-right: 6px;"></i> Create Contest
+      </button>
+    </div>
+  </form>
+</div>
+
+<style>
+.create-contest-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+.page-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.contest-form .form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #444;
+}
+
+input[type="text"],
+input[type="datetime-local"],
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #FF6A00;
+  outline: none;
+}
+
+.time-group {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.time-group > div {
+  flex: 1;
+}
+
+.problems-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 4px;
+}
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  color: #333;
+}
+
+.checkbox-wrapper input {
+  margin-right: 10px;
+}
+
+.form-actions {
+  text-align: center;
+  margin-top: 32px;
+}
+
+.btn-submit {
+  background-color: #FF6A00;
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 12px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-submit:hover {
+  background-color: #e65c00;
+}
+
+@media (max-width: 600px) {
+  .time-group {
+    flex-direction: column;
+  }
+}
+</style>
+
+{% endblock %}

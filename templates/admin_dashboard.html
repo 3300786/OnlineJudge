@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-dashboard-container">
+    <h2>Admin Dashboard</h2>
+    <h3>All Users</h3>
+
+    <!-- 搜索框 -->
+    <div class="search-container">
+        <input type="text" id="user-search" class="search-input" placeholder="Search users...">
+    </div>
+
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="user-list">
+            {% for user in users %}
+            <tr class="user-row">
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <form action="{{ url_for('update_role', user_id=user.id) }}" method="POST" class="role-form">
+                        <div class="role-select-container">
+                            <select name="role" class="role-select">
+                                <option value="user" {% if user.role == 'user' %}selected{% endif %}>User</option>
+                                <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="role-btn">Update Role</button>
+                    </form>
+                </td>
+                <td><a href="{{ url_for('user_history', user_id=user.id) }}" class="btn">View Profile</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<a href="{{ url_for('index') }}" class="back-link">← Back to Home</a>
+
+<style>
+.admin-dashboard-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: 600;
+}
+
+h3 {
+    margin-bottom: 15px;
+    color: #FF6A00;
+    font-size: 1.8em;
+}
+
+/* 搜索框样式 */
+.search-container {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.search-input {
+    padding: 10px 20px;
+    width: 80%;
+    max-width: 400px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.search-input:focus {
+    border-color: #FF6A00;
+    outline: none;
+}
+
+/* 表格样式 */
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.user-table th, .user-table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.user-table th {
+    background-color: #f8f8f8;
+    font-weight: 600;
+}
+
+.user-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.user-table .user-row {
+    transition: background-color 0.3s ease;
+}
+
+.user-table .user-row:hover {
+    background-color: #f1f1f1;
+}
+
+.btn {
+    background-color: #FF6A00;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1em;
+    transition: background-color 0.3s, transform 0.2s ease;
+}
+
+.btn:hover {
+    background-color: #e74c3c;
+    transform: scale(1.05);
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #555;
+    font-size: 1.2em;
+}
+
+.back-link:hover {
+    color: #333;
+}
+
+.role-form {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 10px 0;
+}
+
+.role-select-container {
+    flex-grow: 1;
+}
+
+.role-select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    font-size: 16px;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.role-select:focus {
+    border-color: #FF6A00;
+    background-color: #f4f4f4;
+    outline: none;
+}
+
+.role-btn {
+    background-color: #FF6A00;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.2s ease-in-out;
+}
+
+.role-btn:hover {
+    background-color: #e74c3c;
+    transform: scale(1.05);
+}
+
+.role-btn:active {
+    background-color: #d62c1a;
+}
+
+@media (max-width: 768px) {
+    .user-table th, .user-table td {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .role-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .role-select, .role-btn {
+        width: 100%;
+    }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.user-row {
+    animation: fadeIn 0.5s ease-out;
+}
+</style>
+
+<script>
+    // 搜索用户功能
+    document.getElementById('user-search').addEventListener('input', function() {
+        let searchQuery = this.value.toLowerCase();
+        let rows = document.querySelectorAll('.user-row');
+        rows.forEach(row => {
+            let username = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            if (username.includes(searchQuery)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+{% endblock %}

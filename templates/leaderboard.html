@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Leaderboard 页面 -->
+<div class="leaderboard-container fade-in">
+  <div class="header">
+    <h1>
+      <i class="fas fa-trophy" style="color: var(--main-orange);"></i>
+      Leaderboard
+    </h1>
+    <p class="subtitle">Top Users by Solved Problems</p>
+  </div>
+
+  <table class="leaderboard-table">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>User</th>
+        <th>Solved</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user, solved_count in user_stats %}
+      <tr>
+        <td class="rank-cell">{{ loop.index }}</td>
+        <td>
+          <a href="{{ url_for('user_history', user_id=user.id) }}" class="user-link">{{ user.username }}</a>
+        </td>
+        <td>{{ solved_count }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- 分页组件占位，后续可接入统一分页组件 -->
+  <div class="pagination-container">
+    <!-- 这里将插入分页组件 -->
+  </div>
+
+  <div class="back-link-container">
+    <a href="{{ url_for('index') }}" class="back-link">
+      <i class="fas fa-arrow-left"></i>
+      <span>Back to Home</span>
+    </a>
+  </div>
+</div>
+
+<style>
+:root {
+  --main-orange: #FF6A00;  /* 深橙色 */
+  --bg-white: #ffffff;
+  --text-dark: #333333;
+}
+
+/* 页面整体动画 */
+.fade-in {
+  animation: fadeInUp 0.6s ease-out both;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Leaderboard Container */
+.leaderboard-container {
+  max-width: 960px;
+  margin: 50px auto;
+  padding: 50px;
+  background-color: var(--bg-white);
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* Header 部分 */
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.header h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text-dark);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+.subtitle {
+  font-size: 18px;
+  color: #666;
+  margin-top: 8px;
+}
+
+/* Leaderboard 表格 */
+.leaderboard-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 14px;
+  font-size: 18px;
+}
+.leaderboard-table th,
+.leaderboard-table td {
+  padding: 16px;
+  text-align: center;
+}
+.leaderboard-table th {
+  background-color: #f1f3f5;
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 17px;
+  border-bottom: 2px solid #e0e0e0;
+}
+.leaderboard-table td {
+  background-color: #fff;
+  padding: 18px;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+.leaderboard-table tr:hover td {
+  background-color: #f9f9f9;
+  transform: scale(1.01);
+}
+.rank-cell {
+  font-weight: bold;
+  font-size: 20px;
+  color: #2b2b2b;
+}
+.user-link {
+  text-decoration: none;
+  color: var(--main-orange);
+  font-weight: 600;
+  transition: color 0.3s;
+}
+.user-link:hover {
+  color: #FF6A00;  /* 确保 hover 时颜色一致 */
+  text-decoration: underline;
+}
+
+/* 分页占位（可扩展） */
+.pagination-container {
+  margin-top: 24px;
+  text-align: center;
+}
+
+/* 返回链接 */
+.back-link-container {
+  margin-top: 50px;
+  text-align: left;
+}
+.back-link {
+  font-size: 16px;
+  color: #444;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.3s ease;
+}
+.back-link:hover {
+  color: #000;
+}
+.back-link i {
+  transition: transform 0.3s ease;
+}
+.back-link:hover i {
+  transform: translateX(-3px);
+}
+
+/* 响应式支持 */
+@media (max-width: 768px) {
+  .leaderboard-container {
+    padding: 30px;
+  }
+  .header h1 {
+    font-size: 28px;
+  }
+  .subtitle {
+    font-size: 16px;
+  }
+  .leaderboard-table th, .leaderboard-table td {
+    padding: 12px;
+    font-size: 16px;
+  }
+  .back-link {
+    font-size: 14px;
+  }
+}
+</style>
+{% endblock %}

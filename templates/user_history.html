@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="history-container">
+    <h2>{{ user.username }}'s Profile & Submission History</h2>
+
+    <!-- 用户个人信息展示 -->
+    <div class="user-info">
+        <h3>Personal Information</h3>
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Blog:</strong>
+            {% if user.blog %}
+                <a href="{{ user.blog }}" target="_blank" class="blog-link">{{ user.blog }}</a>
+            {% else %}
+                No blog available.
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- 提交记录统计 -->
+    <div class="stats">
+        <p><strong>Total Submissions:</strong> {{ total_submissions }}</p>
+        <p><strong>Accepted Submissions:</strong> {{ accepted_submissions }}</p>
+    </div>
+
+    <h3>Submission Details:</h3>
+    <table class="history-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Problem</th>
+                <th>Status</th>
+                <th>Score</th>
+                <th>Language</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sub in submissions %}
+            <tr>
+                <td><a href="{{ url_for('submission_status', submission_id=sub.id) }}" class="submission-link">{{ sub.id }}</a></td>
+                <td>{{ sub.problem_id }}</td>
+                <td>
+                    <span class="status-label {{ sub.status|lower|replace(' ', '-') }}">
+                        {{ sub.status }}
+                    </span>
+                </td>
+                <td>{{ sub.score }}</td>
+                <td>{{ sub.language }}</td>
+                <td>{{ sub.submit_time.strftime("%Y-%m-%d %H:%M") }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<a href="{{ url_for('index') }}" class="back-link">← Back to Home</a>
+
+<style>
+.history-container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 30px;
+    background-color: var(--bg-white);
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.06);
+}
+
+h2 {
+    color: var(--text-dark);
+    margin-bottom: 20px;
+    font-family: 'Arial', sans-serif;
+    font-weight: 600;
+}
+
+.user-info, .stats {
+    margin-bottom: 30px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+h3 {
+    margin-bottom: 15px;
+    color: var(--main-orange);
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.history-table th, .history-table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.history-table th {
+    background-color: #f8f8f8;
+}
+
+.status-label {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.status-label.accepted {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-label.wrong-answer {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-label.compile-error {
+    background-color: #ffeeba;
+    color: #856404;
+}
+
+.status-label.time-limit-exceeded {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.submission-link {
+    text-decoration: none;
+    color: var(--main-orange);
+}
+
+.submission-link:hover {
+    text-decoration: underline;
+}
+
+.blog-link {
+    color: var(--main-orange);
+    text-decoration: none;
+}
+
+.blog-link:hover {
+    text-decoration: underline;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #555;
+}
+
+.back-link:hover {
+    color: var(--main-orange);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .history-container {
+        padding: 20px;
+    }
+    .history-table th, .history-table td {
+        padding: 8px;
+    }
+    h2 {
+        font-size: 1.5em;
+    }
+    .user-info, .stats {
+        margin-bottom: 15px;
+    }
+}
+</style>
+
+{% endblock %}

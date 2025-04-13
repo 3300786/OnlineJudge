@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="submissions-container fade-in">
+    <div class="header">
+        <h2><i class="lucide lucide-file-text"></i> My Submissions</h2>
+    </div>
+
+    <table class="submissions-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Problem</th>
+                <th>Status</th>
+                <th>Language</th>
+                <th>Time</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sub in submissions %}
+            <tr>
+                <td><a href="{{ url_for('submission_status', submission_id=sub.id) }}" class="submission-link">{{ sub.id }}</a></td>
+                <td>#{{ sub.problem_id }}</td>
+                <td>
+                    <span class="status-label {{ sub.status|lower|replace(' ', '-') }}">
+                        {{ sub.status }}
+                    </span>
+                </td>
+                <td>{{ sub.language }}</td>
+                <td>{{ sub.submit_time.strftime("%Y-%m-%d %H:%M") }}</td>
+                <td>
+                    <a href="{{ url_for('submission_status', submission_id=sub.id) }}" class="btn btn-view">Details</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="back-link-container">
+        <a href="{{ url_for('index') }}" class="back-link">
+            <i class="lucide lucide-arrow-left"></i>
+            <span class="text">Back to Home</span>
+        </a>
+    </div>
+</div>
+
+<style>
+/* 动画 */
+.fade-in {
+    animation: fadeInUp 0.6s ease-out both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.submissions-container {
+    max-width: 1080px;
+    margin: 40px auto;
+    padding: 40px;
+    background-color: #fcfcfc;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+.header h2 {
+    font-size: 26px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.submissions-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+}
+
+.submissions-table th {
+    text-align: center;
+    padding: 12px;
+    background-color: #f1f3f5;
+    font-weight: 600;
+    font-size: 14px;
+    color: #444;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.submissions-table td {
+    text-align: center;
+    padding: 14px;
+    background-color: #fff;
+    font-size: 14px;
+    color: #333;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    transition: background-color 0.3s;
+}
+
+.submissions-table tr:hover td {
+    background-color: #f9f9f9;
+}
+
+.status-label {
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+/* 状态标签的颜色保持不变 */
+.status-label.accepted {
+    background-color: #e1f5e1;
+    color: #237a3a;
+}
+
+.status-label.wrong-answer {
+    background-color: #fce4e4;
+    color: #b00020;
+}
+
+.status-label.compile-error {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-label.time-limit-exceeded {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.submission-link {
+    text-decoration: none;
+    color: #FF6A00;  /* 橙色 */
+    font-weight: 500;
+}
+
+.submission-link:hover {
+    text-decoration: underline;
+}
+
+.btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 8px;
+    text-decoration: none;
+    color: white;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.btn-view {
+    background-color: #FF6A00;  /* 橙色 */
+}
+
+.btn-view:hover {
+    background-color: #FF6A00;  /* 橙色 hover 效果 */
+    transform: scale(1.04);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.back-link-container {
+    margin-top: 40px;
+    text-align: left;
+}
+
+.back-link {
+    font-size: 15px;
+    color: #555;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+}
+
+.back-link:hover {
+    color: #222;
+}
+
+.back-link:hover .lucide {
+    transform: translateX(-3px);
+}
+
+.lucide {
+    transition: transform 0.3s ease;
+}
+</style>
+{% endblock %}

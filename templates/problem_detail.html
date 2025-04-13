@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="problem-container fade-in">
+    <div class="header">
+        <h2 class="title">{{ problem.title }}</h2>
+    </div>
+
+    <div class="meta-section">
+        <div class="meta-item">
+            <span class="meta-label">Tags:</span>
+            <div class="tags">
+                {% for tag in problem.tags %}
+                    <span class="tag hover-effect">{{ tag.name }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">Time Limit:</span>
+            <span class="meta-value">{{ problem.time_limit }}s</span>
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">Memory Limit:</span>
+            <span class="meta-value">{{ problem.memory_limit }}MB</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h4 class="section-title">Description</h4>
+        <p class="description">{{ problem.description }}</p>
+    </div>
+
+    {% if 'user_id' in session %}
+        <a href="{{ url_for('submit', problem_id=problem.id, contest_id=contest_id) }}" class="btn btn-primary">
+            <i class="fas fa-upload" style="margin-right: 8px;"></i>Submit Your Code
+        </a>
+    {% else %}
+        <p class="notice">You must <a href="{{ url_for('login') }}">log in</a> to submit code.</p>
+    {% endif %}
+
+    <div class="back-link-container">
+        {% if contest_id %}
+            <a href="{{ url_for('contest_list') }}" class="back-link">
+                <i class="fas fa-arrow-left" style="margin-right: 6px;"></i>
+                <span class="text">Back to Contest List</span>
+            </a>
+        {% else %}
+            <a href="{{ url_for('problem_list') }}" class="back-link">
+                <i class="fas fa-arrow-left" style="margin-right: 6px;"></i>
+                <span class="text">Back to Problem List</span>
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+/* 动画效果 */
+.fade-in {
+    animation: fadeInUp 0.6s ease-out both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.problem-container {
+    max-width: 860px;
+    margin: 40px auto;
+    padding: 40px;
+    background-color: #fafafa;
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    position: relative;
+    overflow: hidden;
+}
+
+.header .title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 24px;
+
+    animation: fadeIn 0.8s ease-out;
+}
+
+.meta-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.meta-item {
+    flex: 1 1 200px;
+}
+
+.meta-label {
+    font-weight: 500;
+    color: #555;
+    margin-right: 8px;
+}
+
+.meta-value {
+    font-weight: 400;
+    color: #333;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.tag {
+    background-color: #f1f3f5;
+    color: #4a4a4a;
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.25s ease;
+}
+
+.tag:hover {
+    background-color: #e9ecef;
+    transform: scale(1.05);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.hover-effect {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.4s ease;
+}
+
+.hover-effect:hover {
+    transform: scale(1.1);
+}
+
+.section {
+    margin-top: 32px;
+    animation: slideIn 0.8s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.description {
+    font-size: 15px;
+    color: #444;
+    line-height: 1.6;
+    max-height: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    transition: max-height 0.3s ease;
+}
+
+.description:hover {
+    max-height: none;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    margin-top: 30px;
+    transition: all 0.3s ease;
+    transform: scale(1);
+}
+
+.btn-primary {
+    background-color: #FF6A00;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #e25a00;
+    transform: scale(1.03);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.notice {
+    margin-top: 24px;
+    color: #d32f2f;
+    font-size: 15px;
+}
+
+.notice a {
+    color: #3b82f6;
+    text-decoration: underline;
+}
+
+.back-link-container {
+    margin-top: 48px;
+    animation: fadeInLeft 0.8s ease-out;
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.back-link {
+    font-size: 15px;
+    color: #666;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+}
+
+.back-link:hover {
+    color: #222;
+}
+
+.back-link:hover .fas {
+    transform: translateX(-3px);
+}
+
+.fas {
+    transition: transform 0.3s ease;
+}
+</style>
+{% endblock %}

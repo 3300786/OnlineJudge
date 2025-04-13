@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Font Awesome 图标引入 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<div class="submit-container fade-in">
+    <div class="submit-header">
+
+        <h2><i class="fas fa-upload"></i> Submit Code for: {{ problem.title }}</h2>
+    </div>
+
+    <form method="post" class="submit-form">
+        <div class="form-group">
+            <label for="language"><i class="fas fa-code"></i> Language:</label>
+            <select name="language" id="language" class="dropdown">
+                <option value="C++">C++</option>
+                <option value="Python">Python</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="code"><i class="fas fa-terminal"></i> Code:</label>
+            <textarea name="code" id="code" rows="15" class="code-box" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-paper-plane"></i> Submit Code
+        </button>
+    </form>
+
+    <div class="back-link-wrapper">
+        <a href="{{ url_for('problem_detail', problem_id=problem.id) }}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Problem
+        </a>
+    </div>
+</div>
+
+<style>
+body {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    background-color: #f5f7fa;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.submit-container {
+    max-width: 960px;
+    margin: 40px auto;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+.submit-header {
+    background: linear-gradient(to right, #FF6A00, #ff944d);
+    padding: 20px 30px;
+    color: white;
+    border-radius: 12px 12px 0 0;
+}
+
+.submit-header h2 {
+    margin: 0;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.submit-form {
+    padding: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.dropdown {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    background-color: #fafafa;
+    transition: border 0.3s ease;
+}
+
+.dropdown:focus {
+    border-color: #FF6A00;
+    outline: none;
+}
+
+.code-box {
+    width: 100%;
+    padding: 14px;
+    font-family: Consolas, monospace;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
+    resize: vertical;
+    line-height:1.2;
+}
+
+.code-box:focus {
+    border-color: #FF6A00;
+    outline: none;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-primary {
+    background-color: #FF6A00;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #e65c00;
+    transform: scale(1.03);
+}
+
+.back-link-wrapper {
+    padding: 20px 30px 30px;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    color: #666;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.back-link:hover {
+    color: #000;
+}
+
+/* 响应式支持 */
+@media (max-width: 768px) {
+    .submit-form {
+        padding: 20px;
+    }
+
+    .submit-header h2 {
+        font-size: 18px;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .dropdown,
+    .code-box {
+        font-size: 14px;
+    }
+}
+</style>
+
+{% endblock %}
