@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="create-announcement-container fade-in">
+  <h2 class="page-title">📢 Create New Announcement</h2>
+
+  <form method="POST" class="announcement-form">
+    <div class="form-field">
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" required>
+    </div>
+
+    <div class="form-field">
+      <label for="content">Content</label>
+      <textarea id="content" name="content" rows="6" required></textarea>
+    </div>
+
+    <button type="submit" class="submit-btn">
+      <i class="fas fa-check-circle"></i> Submit Announcement
+    </button>
+  </form>
+</div>
+
+<style>
+.create-announcement-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 32px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: #222;
+}
+
+.announcement-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-field label {
+  font-weight: 500;
+  margin-bottom: 6px;
+  display: inline-block;
+  color: #333;
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  background-color: #fafafa;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  border-color: #FF6A00;
+  background-color: #fff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+}
+
+.submit-btn {
+  align-self: flex-start;
+  background-color: #FF6A00;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.submit-btn i {
+  margin-right: 8px;
+}
+
+.submit-btn:hover {
+  background-color: #e27800;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.fade-in {
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .create-announcement-container {
+    padding: 20px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
+{% endblock %}

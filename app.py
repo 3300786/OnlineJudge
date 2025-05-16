@@ -4,7 +4,7 @@ from config import Config
 from functools import wraps
 from datetime import datetime
 from flask import request, redirect, url_for, session, flash
-from models import User, Problem, Submission, Tag, Contest, ContestRanking, ContestRegistration
+from models import User, Problem, Submission, Tag, Contest, ContestRanking, ContestRegistration, Announcement, BlogPost
 from extensions import db, migrate
 from threading import Thread
 import os
@@ -304,7 +304,45 @@ def admin_required(f):
 @admin_required
 def admin_dashboard():
     users = User.query.all()  # 获取所有用户
-    return render_template('admin_dashboard.html', users=users)
+    contests = Contest.query.all()
+    problems = Problem.query.all()
+    print(users)
+    print(contests)
+    print(problems)
+    return render_template('admin_dashboard.html', users=users, contests=contests, problems=problems)
+
+
+@app.route('/admin/contest/delete/<int:contest_id>', methods=['POST'])
+@admin_required
+def admin_delete_contest(contest_id):
+    contest = Contest.query.get_or_404(contest_id)
+    db.session.delete(contest)
+    db.session.commit()
+    flash("Contest deleted successfully.", "success")
+    return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/admin/problem/delete/<int:problem_id>', methods=['POST'])
+@admin_required
+def admin_delete_problem(problem_id):
+    problem = Problem.query.get_or_404(problem_id)
+    db.session.delete(problem)
+    db.session.commit()
+    flash("Problem deleted successfully.", "success")
+    return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/admin/user/delete/<int:user_id>', methods=['POST'])
+@admin_required
+def admin_delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    if user.role == "admin":
+        flash("Cannot delete an admin user.", "error")
+        return redirect(url_for('admin_dashboard'))
+    db.session.delete(user)
+    db.session.commit()
+    flash("User deleted successfully.", "success")
+    return redirect(url_for('admin_dashboard'))
 
 
 # 修改用户角色的路由
@@ -413,10 +451,10 @@ def contest_list():
 
     # 分页处理
     total = query.count()
-    contests = query.order_by(Contest.start_time.desc())\
-                    .offset((page - 1) * per_page)\
-                    .limit(per_page)\
-                    .all()
+    contests = query.order_by(Contest.start_time.desc()) \
+        .offset((page - 1) * per_page) \
+        .limit(per_page) \
+        .all()
 
     # 为每个 contest 添加 status 字段（传给前端使用）
     for contest in contests:
@@ -438,6 +476,7 @@ def contest_list():
 
 
 from models import Submission  # 确保导入了 Submission 模型
+
 
 @app.route('/contest/<int:contest_id>', methods=['GET'])
 def contest_detail(contest_id):
@@ -523,7 +562,8 @@ def contest_ranking(contest_id):
                     wrong_attempts += 1
 
             if accepted_time is not None:
-                user_entry['problems'][problem.id] = f"+{wrong_attempts}({int(accepted_time)})" if wrong_attempts else f"+({int(accepted_time)})"
+                user_entry['problems'][
+                    problem.id] = f"+{wrong_attempts}({int(accepted_time)})" if wrong_attempts else f"+({int(accepted_time)})"
                 user_entry['correct_count'] += 1
                 user_entry['total_penalty'] += int(accepted_time + wrong_attempts * 20)
             elif wrong_attempts > 0:
@@ -555,6 +595,7 @@ def contest_ranking(contest_id):
         page=page
     )
 
+
 @app.route('/register_contest/<int:contest_id>', methods=['POST'])
 def register_contest(contest_id):
     if 'user_id' not in session:
@@ -580,5 +621,90 @@ def register_contest(contest_id):
     return redirect(url_for('contest_detail', contest_id=contest_id))
 
 
+@app.route('/community/announcements')
+def announcements():
+    # 获取所有公告，按创建时间倒序排序
+    announcements = Announcement.query.order_by(Announcement.created_at.desc()).all()
+
+    # 获取当前用户（如果已登录）
+    user = None
+    if 'user_id' in session:
+        user = User.query.get(session['user_id'])
+
+    return render_template('announcements.html', announcements=announcements, user=user)
+
+
+@app.route('/community/announcements/create', methods=['GET', 'POST'])
+@admin_required
+def create_announcement():
+    if 'user_id' not in session or User.query.get(session['user_id']).role != 'admin':
+        flash('You do not have permission to create an announcement.')
+        return redirect(url_for('announcements'))
+
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+        admin_id = session['user_id']
+
+        new_announcement = Announcement(
+            title=title,
+            content=content,
+            admin_id=admin_id
+        )
+        db.session.add(new_announcement)
+        db.session.commit()
+        flash('Announcement created successfully.')
+        return redirect(url_for('announcements'))
+
+    return render_template('create_announcement.html')
+
+
+@app.route('/community/blogs')
+def blogs():
+    # 获取所有博客文章
+    blogs = BlogPost.query.all()
+    return render_template('blogs.html', blogs=blogs)
+
+
+@app.route('/community/blogs/<int:user_id>')
+def user_blogs(user_id):
+    # 获取特定用户的博客文章
+    user = User.query.get_or_404(user_id)
+    blogs = BlogPost.query.filter_by(user_id=user.id).all()
+    return render_template('user_blogs.html', user=user, blogs=blogs)
+
+
+@app.route('/community/blogs/create', methods=['GET', 'POST'])
+def create_blog():
+    if 'user_id' not in session:
+        flash('Please log in to create a blog.')
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+        user_id = session['user_id']
+
+        new_blog_post = BlogPost(
+            title=title,
+            content=content,
+            user_id=user_id
+        )
+        db.session.add(new_blog_post)
+        db.session.commit()
+        flash('Blog post created successfully.')
+        return redirect(url_for('blogs'))
+
+    return render_template('create_blog.html')
+
+
+@app.route('/community/blog/<int:blog_id>')
+def view_blog(blog_id):
+    # 获取指定博客
+    blog = BlogPost.query.get_or_404(blog_id)
+    return render_template('view_blog.html', blog=blog)
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)

@@ -8,3 +8,4 @@ RUN apt update && apt install -y \
 WORKDIR /workspace
 
 CMD ["bash"]
+

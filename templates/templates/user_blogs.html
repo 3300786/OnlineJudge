@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="blog-container fade-in">
+  <h2 class="page-title">{{ user.username }}'s Blog Posts</h2>
+
+  <div class="blog-list">
+    {% for blog in blogs %}
+      <div class="blog-card hover-effect">
+        <h3 class="blog-title">{{ blog.title }}</h3>
+        <p class="blog-snippet">{{ blog.content[:200] }}...</p>
+        <a href="{{ url_for('view_blog', blog_id=blog.id) }}" class="btn btn-primary">View Full Post</a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+.blog-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 24px;
+  background-color: #fff;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: #222;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.page-title:hover {
+  color: #FF6A00; /* 爱马仕橙色 */
+  transform: translateY(-4px);
+}
+
+.blog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.blog-card {
+  background-color: #fafafa;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.blog-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.blog-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+.blog-title:hover {
+  color: #FF6A00; /* 爱马仕橙色 */
+}
+
+.blog-snippet {
+  font-size: 1.1rem;
+  color: #444;
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  background-color: #FF6A00;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #e27b00;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary i {
+  margin-right: 8px;
+}
+
+.fade-in {
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .blog-container {
+    padding: 16px;
+  }
+
+  .page-title {
+    font-size: 1.8rem;
+  }
+
+  .blog-title {
+    font-size: 1.5rem;
+  }
+
+  .blog-snippet {
+    font-size: 1rem;
+  }
+
+  .btn-primary {
+    padding: 10px 16px;
+  }
+}
+</style>
+{% endblock %}

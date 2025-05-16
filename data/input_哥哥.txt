@@ -1,0 +1,11 @@
+API
+http://<domjudge url>/api/contests/<cid>/event-feed?stream=false
+
+滚榜
+cd C:\\Users\\win10\\Desktop\\新生赛\\resolver
+ICPC_FONT="Microsoft Yahei" ./resolver.sh cdp --display_name "{org.formal_name} --{team.display_name}"
+
+
+设置奖项
+cd C:\\Users\\win10\\Desktop\\新生赛\\resolver
+sh awards.sh

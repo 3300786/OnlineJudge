@@ -1,0 +1,1 @@
+[+] Finished creating 1000 files under /tmp/ojtest

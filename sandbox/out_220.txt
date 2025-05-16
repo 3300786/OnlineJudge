@@ -1,0 +1,3 @@
+[+] Source code written to /tmp/ojtest/infinite_loop.cpp
+[+] Compilation succeeded. Executing the program...
+[*] Execution finished with status: 35072

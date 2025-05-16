@@ -115,3 +115,22 @@ class ContestRanking(db.Model):
     user = db.relationship('User')
     problem = db.relationship('Problem')
 
+
+class Announcement(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(128), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    admin_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    admin = db.relationship('User', backref='announcements')
+
+
+class BlogPost(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(128), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    user = db.relationship('User', backref='blog_posts')

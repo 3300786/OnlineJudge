@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="blogs-container fade-in">
+  <div class="page-header">
+    <h2 class="page-title">📝 Blogs
+      <a href="{{ url_for('create_blog') }}" class="btn btn-secondary create-btn">Create New Blog</a>
+    </h2>
+  </div>
+
+  <div class="blog-list">
+    {% for blog in blogs %}
+      <div class="blog-card hover-effect">
+        <h3 class="blog-title">{{ blog.title }}</h3>
+        <p class="blog-content">{{ blog.content[:200] }}...</p>
+        <div class="blog-meta">
+          <span>By <strong>{{ blog.user.username }}</strong></span>
+          <a href="{{ url_for('view_blog', blog_id=blog.id) }}" class="btn btn-primary">View Blog</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+  /* 统一布局 */
+  .blogs-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 24px;
+    background-color: #fff;
+  }
+
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: #222;
+    transition: transform 0.3s ease, color 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .page-title:hover {
+    transform: scale(1.1);
+    color: #FF6A00; /* 爱马仕橙色 */
+  }
+
+  .create-btn {
+    background-color: #FF6A00; /* 爱马仕橙色 */
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .create-btn:hover {
+    background-color: #e27b00;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .blog-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .blog-card {
+    background-color: #fafafa;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .blog-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+  }
+
+  .blog-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+
+  .blog-title:hover {
+    color: #FF6A00; /* 爱马仕橙色 */
+    transform: translateX(5px);
+  }
+
+  .blog-content {
+    font-size: 1rem;
+    color: #444;
+    margin-bottom: 16px;
+    line-height: 1.6;
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out forwards;
+  }
+
+  /* 动画效果：渐显 */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .blog-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+    color: #777;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    background-color: #FF6A00;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: #e27b00;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-primary i {
+    margin-right: 6px;
+  }
+
+  /* 增加响应式设计 */
+  @media (max-width: 768px) {
+    .blogs-container {
+      padding: 16px;
+    }
+
+    .blog-title {
+      font-size: 1.6rem;
+    }
+
+    .blog-card {
+      padding: 16px;
+    }
+
+    .blog-meta {
+      font-size: 0.8rem;
+    }
+
+    .page-title {
+      font-size: 2rem;
+    }
+  }
+</style>
+{% endblock %}

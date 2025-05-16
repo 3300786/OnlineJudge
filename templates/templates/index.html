@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Online Judge</title>
+  <link rel="stylesheet" href="https://unpkg.com/@arco-design/web-react/dist/css/arco.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --main-orange: #ff6a00;
+      --bg-white: #ffffff;
+      --text-dark: #333333;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #f9f9f9;
+      color: var(--text-dark);
+      overflow-x: hidden; /* 防止横向滚动 */
+    }
+
+    /* Hero Section */
+    .hero {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60vh;
+      background-color: var(--bg-white);
+      transition: all 0.5s ease;
+      padding: 20px; /* 增加内边距，防止内容靠边显示 */
+    }
+
+    .hero-logo {
+      font-size: 80px;
+      font-weight: bold;
+      color: var(--main-orange);
+      margin-right: 20px;
+      transition: all 0.5s ease;
+    }
+
+    .hero-text-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.5s ease;
+    }
+
+    .hero-text {
+      font-size: 28px;
+      font-weight: 500;
+      color: #444;
+      transition: all 0.5s ease;
+    }
+
+    .hero:hover .hero-logo {
+      font-size: 40px;
+    }
+
+    .hero:hover .hero-text {
+      font-size: 48px;
+      font-weight: bold;
+      color: var(--main-orange);
+    }
+
+    .hero:hover .hero-text::before {
+      content: "Let's code better";
+    }
+
+    .hero .hero-text::before {
+      content: "Ripuka’s online judge platform";
+    }
+
+    .hero:hover .hero-divider {
+      opacity: 1;
+    }
+
+    .hero-divider {
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      font-size: 32px;
+      color: #bbb;
+    }
+
+    /* Grid Section */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 40px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .grid-item {
+      position: relative;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      padding: 40px;
+      text-align: center;
+      font-size: 24px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: 150px;
+    }
+
+    .grid-item:hover {
+      background-color: var(--main-orange);
+      color: white;
+      transform: scale(1.1);
+      z-index: 10;
+    }
+
+    .grid-title {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: all 0.3s ease;
+      font-size: 24px;
+      z-index: 1;
+    }
+
+    .grid-item:hover .grid-title {
+      transform: translate(-50%, -90px);
+    }
+
+    .submenu {
+      position: relative;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 0;
+      margin-top: 80px;
+    }
+
+    .grid-item:hover .submenu {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .submenu a {
+      display: block;
+      margin: 5px 0;
+      font-size: 16px;
+      color: white;
+      text-decoration: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .submenu a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .hero {
+        flex-direction: column;
+        text-align: center;
+      }
+      .hero-logo {
+        font-size: 60px;
+        margin-bottom: 10px;
+      }
+      .hero-divider {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        flex-direction: column;
+        text-align: center;
+      }
+      .hero-logo {
+        font-size: 60px;
+        margin-bottom: 10px;
+      }
+      .hero-divider {
+        display: none;
+      }
+
+      /* 改善触摸事件 */
+      .grid-item, .hero {
+        touch-action: manipulation; /* 避免阻止触摸事件 */
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-logo">OJ</div>
+    <div class="hero-text-container">
+      <div class="hero-divider">|</div>
+      <div class="hero-text"></div>
+    </div>
+  </div>
+
+  <!-- Grid Navigation -->
+  <div class="grid-container">
+    <div class="grid-item">
+      <div class="grid-title">Problem</div>
+      <div class="submenu">
+        <a href="{{ url_for('problem_list') }}">Problem List</a>
+        <a href="{{ url_for('user_submissions') }}">My Submission</a>
+        <a href="{{ url_for('leaderboard') }}">Leaderboard</a>
+      </div>
+    </div>
+
+    <div class="grid-item">
+      <div class="grid-title">Contest</div>
+      <div class="submenu">
+        <a href="{{ url_for('contest_list') }}">Contests</a>
+      </div>
+    </div>
+
+    <div class="grid-item">
+      <div class="grid-title">Community</div>
+      <div class="submenu">
+        <a href="https://codeforces.com/profile/AEcreator">codeforces</a>
+        <a href="https://www.luogu.com.cn/user/803102">Luogu</a>
+        <a href="https://www.codechef.com/users/ripuka">Codechef</a>
+        <a href="https://leetcode.cn/u/i3usy-mccarthywji/">LeetCode</a>
+        <a href="https://blog.csdn.net/m0_73355263">CSDN</a>
+        <a href="https://atcoder.jp/users/RIPUKA">Atcoder</a>
+        <a href="https://ac.nowcoder.com/acm/contest/profile/163648667">NowCoder</a>
+      </div>
+    </div>
+
+    <div class="grid-item">
+      <div class="grid-title">Profile</div>
+      <div class="submenu">
+        {% if 'user_id' in session %}
+          <a href="#">{{ session['username'] }}</a>
+          <a href="{{ url_for('edit_profile') }}">Edit Profile</a>
+
+        {% if session['role'] == 'admin' %}
+            <a href="{{ url_for('admin_dashboard') }}">Manage Users</a>
+          {% endif %}
+          <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+          <a href="{{ url_for('login') }}">Login</a>
+          <a href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

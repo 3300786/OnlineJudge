@@ -26,6 +26,7 @@
       color: var(--text-dark);
     }
 
+    /* PC端导航栏样式：固定在顶部 */
     .navbar {
       position: fixed;
       top: 0;
@@ -40,7 +41,6 @@
       height: 60px;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
       border-bottom: 1px solid #f0f0f0;
-
     }
 
     .nav-logo {
@@ -48,9 +48,17 @@
       font-weight: bold;
       color: var(--main-orange);
       cursor: pointer;
-      text-decoration: none; /* 确保没有下划线 */
+      text-decoration: none;
     }
 
+    /* 默认隐藏汉堡按钮，仅在移动端显示 */
+    .hamburger {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    /* 默认横向排列 */
     .nav-items {
       display: flex;
       gap: 20px;
@@ -64,8 +72,8 @@
       cursor: pointer;
       border-radius: 6px;
       transition: background 0.3s;
-      min-width: 100px; /* Ensures each item has the same width */
-      text-align: center; /* Centers text for consistency */
+      min-width: 90px;
+      text-align: center;
     }
 
     .nav-item a {
@@ -73,7 +81,7 @@
       text-decoration: none;
     }
 
-    .nav-item.active,
+    /* PC端鼠标悬停状态 */
     .nav-item:hover {
       background-color: var(--main-orange);
       color: white;
@@ -92,10 +100,10 @@
       visibility: hidden;
       transform: translateY(10px);
       transition: all 0.3s ease;
-      z-index: 9999; /* 确保下拉菜单位于顶部 */
+      z-index: 9999;
     }
 
-    /* 当悬停时显示下拉菜单 */
+    /* PC端：悬停显示下拉菜单 */
     .nav-item:hover .nav-dropdown {
       opacity: 1;
       visibility: visible;
@@ -116,6 +124,7 @@
       background-color: #f5f5f5;
     }
 
+    /* 页面主体，为防止固定导航栏遮挡内容预留上边距 */
     .container {
       margin-top: 80px;
       padding: 20px;
@@ -124,34 +133,118 @@
       margin-right: auto;
     }
 
+    /* 移动端调整 */
     @media (max-width: 768px) {
+      /* 取消固定定位，采用相对定位，并允许换行 */
       .navbar {
-        flex-direction: column;
-        height: auto;
+        position: relative;
         padding: 10px 20px;
+        height: auto;
+        flex-wrap: wrap;
       }
-
+      
+      /* 显示汉堡按钮 */
+      .hamburger {
+        display: block;
+      }
+      
+      /* 默认隐藏导航项，点击汉堡后显示 */
       .nav-items {
-        flex-direction: column;
-        width: 100%;
+        display: none;
+        flex-direction: column;  /* 改为垂直排列 */
         gap: 10px;
-        align-items: flex-start;
+        width: 100%;
+        overflow-x: auto;
+        margin-top: 10px;
       }
-
-      /* 在移动端下，确保下拉菜单不被遮挡 */
-      .nav-dropdown {
-        position: static;
-        z-index: 999;
+      
+      /* 当加上 .open 类后显示导航项 */
+      .nav-items.open {
+        display: flex;
+      }
+      
+      /* 导航项调整：保持全宽 */
+      .nav-item {
+        flex-shrink: 0;
+        width: 100%; /* 使导航项占满全宽 */
+      }
+      
+      /* 容器调整上边距 */
+      .container {
+        margin-top: 20px;
+      }
+      
+      /* 新增：移动端点击后下拉菜单显示样式 */
+      .nav-item.open .nav-dropdown {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        position: relative; /* 改为相对定位，使其不受绝对定位影响 */
+        box-shadow: none;
+      }
+      
+      /* 移动端时取消悬停样式，避免与点击事件冲突 */
+      .nav-item:hover .nav-dropdown {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
       }
     }
   </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      // 汉堡菜单切换
+      const hamburger = document.getElementById('hamburger');
+      const navItems = document.getElementById('nav-items');
+      hamburger.addEventListener('click', function(){
+        navItems.classList.toggle('open');
+      });
+
+      // 针对移动端：点击带下拉菜单的导航项时，先关闭其他项的下拉菜单，再切换当前项的展开状态
+      if(window.innerWidth < 768){
+        // 获取所有包含 nav-dropdown 的 nav-item
+        const navItemsWithDropdown = document.querySelectorAll('.nav-item');
+        navItemsWithDropdown.forEach(item => {
+          if(item.querySelector('.nav-dropdown')){
+            item.addEventListener('click', function(e){
+              // 如果点击目标不是链接（a），则阻止默认行为
+              if(e.target.tagName.toLowerCase() !== 'a'){
+                e.stopPropagation();
+                e.preventDefault();
+                // 关闭其他已打开的下拉菜单
+                const openItems = document.querySelectorAll('.nav-item.open');
+                openItems.forEach(openItem => {
+                  if(openItem !== item){
+                    openItem.classList.remove('open');
+                  }
+                });
+                // 切换当前项的 open 类
+                if(item.classList.contains('open')){
+                  item.classList.remove('open');
+                } else {
+                  item.classList.add('open');
+                }
+              }
+            });
+          }
+        });
+      }
+    });
+  </script>
 </head>
 <body>
 
 <div class="navbar">
-  <!-- Make the logo clickable to go to home -->
+  <!-- 点击 Logo 跳转首页 -->
   <a href="{{ url_for('index') }}" class="nav-logo">OJ</a>
-  <div class="nav-items">
+  
+  <!-- 汉堡菜单按钮，仅在移动端显示 -->
+  <div class="hamburger" id="hamburger">
+    <i class="fas fa-bars"></i>
+  </div>
+  
+  <div class="nav-items" id="nav-items">
     <div class="nav-item {% if request.endpoint == 'index' %}active{% endif %}">
       <a href="{{ url_for('index') }}">Home</a>
     </div>
@@ -172,9 +265,11 @@
       </div>
     </div>
 
-    <div class="nav-item {% if request.endpoint in ['#'] %}active{% endif %}">
+    <div class="nav-item {% if request.endpoint in ['announcements','blogs','create_announcement','create_blog','view_blog','user_blogs'] %}active{% endif %}">
       Community
       <div class="nav-dropdown">
+        <a href="{{ url_for('announcements') }}">Announcements</a>
+        <a href="{{ url_for('blogs') }}">Blogs</a>
         <a href="https://codeforces.com/profile/AEcreator">codeforces</a>
         <a href="https://www.luogu.com.cn/user/803102">Luogu</a>
         <a href="https://www.codechef.com/users/ripuka">Codechef</a>
