@@ -67,6 +67,38 @@
             {% endfor %}
         </tbody>
     </table>
+    <!-- 提交记录管理 -->
+    <h3>Submissions Management</h3>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Problem</th>
+                <th>Status</th>
+                <th>Language</th>
+                <th>Time</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sub in submissions %}
+            <tr class="admin-row">
+                <td>{{ sub.id }}</td>
+<td>{{ sub.user.username if sub.user else 'Deleted User' }}</td>
+<td>{{ sub.problem.title if sub.problem else 'Deleted Problem' }}</td>
+                <td>{{ sub.status }}</td>
+                <td>{{ sub.language }}</td>
+                <td>{{ sub.submit_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>
+                    <form action="{{ url_for('admin_delete_submission', submission_id=sub.id) }}" method="post" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this submission?');">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
     <!-- 用户管理 -->
     <h3>Users Management</h3>

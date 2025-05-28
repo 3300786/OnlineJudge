@@ -306,19 +306,30 @@ def admin_dashboard():
     users = User.query.all()  # 获取所有用户
     contests = Contest.query.all()
     problems = Problem.query.all()
+    submissions = Submission.query.all()
     print(users)
     print(contests)
     print(problems)
-    return render_template('admin_dashboard.html', users=users, contests=contests, problems=problems)
+    print(submissions)
+    return render_template('admin_dashboard.html', users=users, contests=contests, problems=problems, submissions=submissions)
 
 
-@app.route('/admin/contest/delete/<int:contest_id>', methods=['POST'])
+def get_trash_user():
+    return User.query.filter_by(username='[Deleted User]').first()
+
+def get_trash_problem():
+    return Problem.query.filter_by(title='[Deleted Problem]').first()
+
+def get_trash_contest():
+    return Contest.query.filter_by(title='[Deleted Contest]').first()
+
+@app.route('/admin/submission/delete/<int:submission_id>', methods=['POST'])
 @admin_required
-def admin_delete_contest(contest_id):
-    contest = Contest.query.get_or_404(contest_id)
-    db.session.delete(contest)
+def admin_delete_submission(submission_id):
+    submission = Submission.query.get_or_404(submission_id)
+    db.session.delete(submission)
     db.session.commit()
-    flash("Contest deleted successfully.", "success")
+    flash("Submission deleted successfully.", "success")
     return redirect(url_for('admin_dashboard'))
 
 
@@ -326,10 +337,36 @@ def admin_delete_contest(contest_id):
 @admin_required
 def admin_delete_problem(problem_id):
     problem = Problem.query.get_or_404(problem_id)
-    db.session.delete(problem)
+
+    # 将题目标题、描述等字段重命名为 trash，占位标记
+    problem.title = '[Deleted Problem]'
+    problem.description = 'This problem has been deleted by the administrator.'
+    problem.input_path = ''
+    problem.output_path = ''
+    problem.difficulty = 'easy'  # 可选设置默认
+
+    # 解除 tag 和 contest 关联
+    problem.tags.clear()
+    problem.contests.clear()
+
     db.session.commit()
-    flash("Problem deleted successfully.", "success")
+    flash("Problem marked as deleted.", "success")
     return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/admin/contest/delete/<int:contest_id>', methods=['POST'])
+@admin_required
+def admin_delete_contest(contest_id):
+    contest = Contest.query.get_or_404(contest_id)
+
+    contest.title = '[Deleted Contest]'
+    contest.description = 'This contest has been deleted.'
+    contest.problems.clear()  # 移除所有题目关联
+
+    db.session.commit()
+    flash("Contest marked as deleted.", "success")
+    return redirect(url_for('admin_dashboard'))
+
 
 
 @app.route('/admin/user/delete/<int:user_id>', methods=['POST'])
@@ -339,9 +376,19 @@ def admin_delete_user(user_id):
     if user.role == "admin":
         flash("Cannot delete an admin user.", "error")
         return redirect(url_for('admin_dashboard'))
+
+    trash_user = get_trash_user()
+
+    # 替换 submission、blog、announcement、ranking、registration 中的 user_id
+    Submission.query.filter_by(user_id=user.id).update({'user_id': trash_user.id})
+    BlogPost.query.filter_by(user_id=user.id).update({'user_id': trash_user.id})
+    Announcement.query.filter_by(admin_id=user.id).update({'admin_id': trash_user.id})
+    ContestRanking.query.filter_by(user_id=user.id).update({'user_id': trash_user.id})
+    ContestRegistration.query.filter_by(user_id=user.id).update({'user_id': trash_user.id})
+
     db.session.delete(user)
     db.session.commit()
-    flash("User deleted successfully.", "success")
+    flash("User deleted. Associated data reassigned to [Deleted User].", "success")
     return redirect(url_for('admin_dashboard'))
 
 
@@ -706,5 +753,5 @@ def view_blog(blog_id):
 
 
 if __name__ == '__main__':
-    # app.run(debug=True)
+    # app.run(host='127.0.0.1', port=5000,debug=True)
     app.run(host='0.0.0.0', port=5000)
